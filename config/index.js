@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-commonjs
+const { resolve } = require('path');
+
 const config = {
   projectName: 'iLoveWallTaro',
   date: '2020-5-26',
@@ -59,6 +62,11 @@ const config = {
         }
       }
     }
+  },
+  alias: {
+    '@/components': resolve(__dirname, '..', 'src/components/index'),
+    '@/constants': resolve(__dirname, '..', 'src/constants/index'),
+    '@/actions': resolve(__dirname, '..', 'src/actions/index'),
   }
 }
 
