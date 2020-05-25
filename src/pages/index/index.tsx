@@ -1,79 +1,108 @@
-import React, { Component } from 'react'
-import { View, Button, Text } from '@tarojs/components'
-import { connect } from 'react-redux'
+import React from 'react'
+import Taro, { useEffect } from '@tarojs/taro'
+import { View, Text } from '@tarojs/components'
+import { useSelector, useDispatch } from 'react-redux'
+import { AtFab, AtMessage } from 'taro-ui'
+import { PostCard } from '@/components/'
 
-import { add, minus, asyncAdd } from '../../actions/counter'
+import {
+  SET_LOGIN_INFO,
+  GET_POSTS,
+  LOGIN_SUCCESS,
+} from '@/constants/'
 
 import './index.scss'
 
-// #region 书写注意
-//
-// 目前 typescript 版本还无法在装饰器模式下将 Props 注入到 Taro.Component 中的 props 属性
-// 需要显示声明 connect 的参数类型并通过 interface 的方式指定 Taro.Component 子类的 props
-// 这样才能完成类型检查和 IDE 的自动提示
-// 使用函数模式则无此限制
-// ref: https://github.com/DefinitelyTyped/DefinitelyTyped/issues/20796
-//
-// #endregion
-
-type PageStateProps = {
-  counter: {
-    num: number
+interface State {
+  post: {
+    posts: [{
+      title: string
+      content: string
+      id: string
+    }]
+    isOpened: boolean
+    isPosts: boolean
   }
 }
-
-type PageDispatchProps = {
-  add: () => void
-  dec: () => void
-  asyncAdd: () => any
-}
-
-type PageOwnProps = {}
-
-type PageState = {}
-
-type IProps = PageStateProps & PageDispatchProps & PageOwnProps
-
-interface Index {
-  props: IProps;
-}
-
-@connect(({ counter }) => ({
-  counter
-}), (dispatch) => ({
-  add () {
-    dispatch(add())
-  },
-  dec () {
-    dispatch(minus())
-  },
-  asyncAdd () {
-    dispatch(asyncAdd())
-  }
-}))
-class Index extends Component {
-  componentWillReceiveProps (nextProps) {
-    console.log(this.props, nextProps)
-  }
-
-  componentWillUnmount () { }
-
-  componentDidShow () { }
-
-  componentDidHide () { }
-
-  render () {
-    return (
-      <View className='index'>
-        <Button className='add_btn' onClick={this.props.add}>+</Button>
-        <Button className='dec_btn' onClick={this.props.dec}>-</Button>
-        <Button className='dec_btn' onClick={this.props.asyncAdd}>async</Button>
-        <View><Text>{this.props.counter.num}</Text></View>
-        <View><Text>Hello, World</Text></View>
-      </View>
-    )
+interface User {
+  user: {
+    loginStatus: string
+    roles: string[]
   }
 }
+export default function Index() {
+  const posts = useSelector((state: State) => state.post.posts) || []
+  const loginStatus = useSelector((state: User) => state.user.loginStatus)
+  const roles = useSelector((state: User) => state.user.roles)
+  const isPosts = useSelector((state: State) => state.post.isPosts)
+  const isLogged = loginStatus === LOGIN_SUCCESS;
+  const dispatch = useDispatch();
 
-export default Index
+  useEffect(() => {
+    isPosts && Taro.showLoading({ title: '加载中' })
+    !isPosts && Taro.hideLoading();
+  }, [isPosts])
 
+  useEffect(() => {
+    async function getStorage() {
+      try {
+        const { data } = await Taro.getStorage({ key: 'userInfo' })
+        dispatch({
+          type: SET_LOGIN_INFO,
+          payload:
+          {
+            ...data,
+            userId: data._id,
+            loginStatus: LOGIN_SUCCESS,
+          }
+        })
+      } catch (err) {
+        console.log('getStorage ERR-index: ', err)
+      }
+    }
+    if (!isLogged) {
+      getStorage();
+    }
+  }, [isLogged, dispatch])
+
+  useEffect(() => {
+    async function getPosts() {
+      try {
+        // 更新 Redux Store 数据
+        dispatch({
+          type: GET_POSTS,
+        })
+      } catch (err) {
+        console.log('getPosts ERR: ', err)
+      }
+    }
+
+    if (!posts.length) {
+      getPosts()
+    }
+  }, [posts, dispatch])
+
+  const handleClickEdit = () => {
+    const url = '/pages/publish/publish'
+    Taro.navigateTo({
+      url
+    })
+  }
+
+  return (
+    <View className='index'>
+      <AtMessage />
+      {posts.map((post: any) => (
+        <PostCard key={post._id} postId={post._id} post={post} isList />
+      ))}
+      {
+        roles.includes('0') &&
+        <View className='post-button'>
+          <AtFab onClick={() => handleClickEdit()}>
+            <Text className='at-fab__icon at-icon at-icon-edit'></Text>
+          </AtFab>
+        </View>
+      }
+    </View>
+  )
+}
