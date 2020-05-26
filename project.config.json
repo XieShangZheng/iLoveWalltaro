@@ -2,6 +2,7 @@
 	"miniprogramRoot": "dist/",
 	"projectname": "iLoveWallTaro",
 	"description": "表白墙校园小程序",
+	"cloudfunctionRoot": "functions/",
 	"appid": "wxfae03ce8c996b03f",
 	"setting": {
 		"urlCheck": true,
