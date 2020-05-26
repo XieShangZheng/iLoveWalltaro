@@ -13,17 +13,17 @@ import { AtFab, AtMessage } from 'taro-ui'
 
 import './index.scss'
 
-// interface State {
-//   post: {
-//     posts: [{
-//       title: string
-//       content: string
-//       id: string
-//     }]
-//     isOpened: boolean
-//     isPosts: boolean
-//   }
-// }
+interface State {
+  post: {
+    posts: [{
+      title: string
+      content: string
+      id: string
+    }]
+    isOpened: boolean
+    isPosts: boolean
+  }
+}
 // interface User {
 //   user: {
 //     loginStatus: string
@@ -31,7 +31,7 @@ import './index.scss'
 //   }
 // }
 export default function Index() {
-  // const posts = useSelector((state: State) => state.post.posts) || []
+  const posts = useSelector((state: State) => state.post.posts) || []
   // const loginStatus = useSelector((state: User) => state.user.loginStatus)
   // const roles = useSelector((state: User) => state.user.roles)
   // const isPosts = useSelector((state: State) => state.post.isPosts)
