@@ -76,12 +76,8 @@ export default function Index() {
         console.log('getPosts ERR: ', err)
       }
     }
-
-      console.log('%cAT-posts: ', 'color: #bf2c9f; background: pink; font-size: 13px;', posts);
-    // if (!posts.length) {
-    //   getPosts()
-    // }
-  }, [posts, dispatch])
+    getPosts()
+  }, [])
 
   const handleClickEdit = () => {
     const url = '/pages/publish/publish'
