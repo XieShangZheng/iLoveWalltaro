@@ -1,0 +1,15 @@
+@import '../../asset/index';
+
+.user-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 350px;
+  background-color: $color-brand;
+}
+
+.login-button-box {
+  margin-top: 30px;
+  width: 60%;
+}
