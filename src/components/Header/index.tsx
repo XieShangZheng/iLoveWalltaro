@@ -2,9 +2,8 @@ import React from 'react'
 import Taro from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import { useSelector } from 'react-redux'
+import { LoggedMine, WeAppLoginButton } from '@/components/'
 
-import LoggedMine from '../LoggedMine'
-import WeAppLoginButton from '../WeAppLoginButton'
 import './index.scss'
 
 type State = {
